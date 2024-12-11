@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="category">
+
+    </div>
+    <script>
+        let token = localStorage.getItem("token") || ""
+        console.log(token)
+        fetch(`http://localhost:8080/product/all`, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        })
+            .then((Res) => Res.json())
+            .then((Res) => {
+                console.log(Res)
+                document.getElementById("category").innerHTML = view(Res)
+
+            })
+            .catch((err) => console.log(err))
+
+        function view(arr) {
+            return arr.map((el) => {
+                return `<div>
+                      <h1>${el.description}</h1>
+                      <button onclick="add('${el._id}')">add To Cart</button>
+                    </div>`
+            }).join("")
+        }
+        function add(id){
+            fetch(`http://localhost:8080/cart/add`, {
+            method : "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body : JSON.stringify({id})
+        })
+            .then((Res) => Res.json())
+            .then((Res) => {
+                console.log(Res)
+
+            })
+            .catch((err) => console.log(err))
+        }
+    </script>
+</body>
+
+</html>
